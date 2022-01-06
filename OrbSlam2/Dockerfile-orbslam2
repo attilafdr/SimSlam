@@ -1,0 +1,44 @@
+FROM simslam/base:melodic
+
+ARG UNAME=simslam
+
+USER root
+
+# Install OpenCV prerequisites, Eigen3, OpenGL, GLEW, some ros packages required by OrbSlam2 and RVIZ
+RUN apt-get update && apt-get install -y \
+    cmake \
+    g++ \
+    wget \
+    unzip \
+    libeigen3-dev \
+    libglu1-mesa-dev \
+    freeglut3-dev \
+    mesa-common-dev \
+    libglew-dev \
+    ros-melodic-cv-bridge \
+    ros-melodic-image-transport \
+    ros-melodic-tf \
+    ros-melodic-tf2-geometry-msgs \
+    ros-melodic-dynamic-reconfigure\
+    ros-melodic-rviz
+    
+    
+# Build and install OpenCV
+RUN wget https://github.com/opencv/opencv/archive/refs/tags/3.4.5.zip && unzip 3.4.5.zip && cd opencv-3.4.5 && \
+    mkdir build && cd build && \
+    cmake -D CMAKE_BUILD_TYPE=Release -D BUILD_EXAMPLES=OFF  -D BUILD_DOCS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_TESTS=OFF -D CMAKE_INSTALL_PREFIX=/usr/local .. && \
+    make -j$(($(nproc) - 2)) && make install && \
+    cd / && rm -rf /tmp/opencv
+    
+# Build and install Pangolin
+RUN cd /tmp && git clone https://github.com/stevenlovegrove/Pangolin && \
+    cd Pangolin && git checkout v0.6 && mkdir build && cd build && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-std=c++11 .. && \
+    make -j$(($(nproc) - 2)) && make install && \
+    cd / && rm -rf /tmp/Pangolin
+    
+RUN apt-get install -y mesa-utils libgl1-mesa-glx libnvidia-gl-470
+ENV LIBGL_ALWAYS_INDIRECT=1
+    
+USER $UNAME
+    

@@ -1,0 +1,33 @@
+FROM ros:melodic-ros-core
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+ARG UNAME=simslam
+ARG UID=1000
+ARG GID=1000
+
+RUN apt-get update && apt-get install -y \
+    python-pip \
+    python-yaml \
+    python-setuptools \
+    python-catkin-tools \
+    python-rosinstall \
+    python-rosdep \
+    python-rosinstall-generator \
+    ros-melodic-rosbag \
+    python-wstool \
+    build-essential
+    
+RUN rosdep init
+
+# Add user with builder's id, disable password and gecos, and add to sudoers to make life easier later
+RUN groupadd -g $GID -o $UNAME && \
+    useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME
+    
+USER $UNAME
+
+RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc && \
+    rosdep update && \
+    mkdir -p /home/${UNAME}/ros_ws
+
+WORKDIR /home/${UNAME}/ros_ws

@@ -1,0 +1,7 @@
+FROM simslam/base:melodic
+ARG UNAME=simslam
+
+RUN pip install \
+    kitti2bag
+    
+CMD ["bash"]

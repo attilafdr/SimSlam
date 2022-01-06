@@ -1,0 +1,6 @@
+[submodule "AirSim/AirSim"]
+	path = AirSim/AirSim
+	url = git@github.com:microsoft/AirSim.git
+[submodule "OrbSlam2/src/orb_slam_2_ros"]
+	path = OrbSlam2/src/orb_slam_2_ros
+	url = git@github.com:appliedAI-Initiative/orb_slam_2_ros.git

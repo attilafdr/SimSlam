@@ -1,0 +1,14 @@
+FROM simslam/base:melodic
+
+ARG UNAME=simslam
+
+USER root
+    
+RUN apt-get update && apt-get install -y \
+    ros-melodic-image-pipeline \
+    ros-melodic-usb-cam
+    
+RUN adduser $UNAME video && \
+    usermod -a -G video $UNAME
+
+USER $UNAME
